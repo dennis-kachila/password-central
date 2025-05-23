@@ -14,6 +14,22 @@ While modern browsers offer built-in password generation features, they're not c
 - **Password History**: Keep track of all your generated passwords
 - **Secure by Design**: Your data never leaves your device
 
+## Screenshots
+
+Here are some screenshots showing how Password Central works:
+
+### Context Menu Password Generation
+![Context menu showing the Generate Strong Password option](images/context-menu.png)
+*Right-click on any password field to access the password generation feature*
+
+### Password Auto-Fill
+![Password auto-filled in a registration form](images/credential-management.png)
+*The generated password is automatically filled into the selected field*
+
+### Credential Management
+![Password Central popup interface](images/extension-management.png)
+*The extension in management settings*
+
 ## How It Works
 
 1. **Installation**: Install the extension from your browser's extension store (future release) for now just load it as an unpacked extension for development.
