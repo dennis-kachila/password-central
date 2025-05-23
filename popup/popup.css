@@ -1,0 +1,159 @@
+/* Popup Styling */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  width: 350px;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+.container {
+  padding: 16px;
+}
+
+h1 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #2c3e50;
+}
+
+h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #34495e;
+}
+
+.generate-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.password-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.option input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.option label {
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.password-display {
+  display: flex;
+  margin-top: 16px;
+}
+
+#password-field {
+  flex: 1;
+  padding: 8px;
+  font-family: monospace;
+  border: 1px solid #ced4da;
+  border-radius: 4px 0 0 4px;
+}
+
+#copy-btn {
+  padding: 8px 12px;
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  min-width: 60px;
+}
+
+.saved-passwords {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#search-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.credentials-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.credential-item {
+  padding: 8px;
+  border-bottom: 1px solid #e9ecef;
+  cursor: pointer;
+}
+
+.credential-item:hover {
+  background-color: #f1f3f5;
+}
+
+.credential-item .site {
+  font-weight: bold;
+  font-size: 14px;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.credential-item .username {
+  font-size: 12px;
+  color: #7f8c8d;
+}
+
+.credential-item .actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.credential-item .actions button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.no-credentials {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 16px 0;
+}
