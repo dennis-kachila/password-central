@@ -16,7 +16,7 @@ While modern browsers offer built-in password generation features, they're not c
 
 ## How It Works
 
-1. **Installation**: Install the extension from your browser's extension store
+1. **Installation**: Install the extension from your browser's extension store (future release) for now just load it as an unpacked extension for development.
 2. **Usage**:
    - Right-click on any password field when creating a new account
    - Select "Generate Strong Password" from the context menu
@@ -75,13 +75,6 @@ password-central/
 - Credentials are encrypted before being stored
 - The extension requires minimal permissions
 - Regular security audits are performed
-
-## Icons
-
-The extension uses the following icons:
-- Small icon (16px): Key icon
-- Medium icon (48px): Lock icon 
-- Large icon (128px): Password Generator icon
 
 ## Privacy Policy
 
