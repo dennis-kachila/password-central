@@ -32,10 +32,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // Listen for messages from content script to save credentials
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "saveCredentials") {
-    saveCredentials(message.data);
-    sendResponse({ success: true });
+    saveCredentials(message.data, () => {
+      sendResponse({ success: true });
+    });
+    return true; // Keep the message channel open for the async response
   }
-  return true;
 });
 
 // Generate a strong password
@@ -64,7 +65,7 @@ function generateStrongPassword(length = 16) {
 }
 
 // Save credentials to local storage
-function saveCredentials(data) {
+function saveCredentials(data, callback) {
   chrome.storage.local.get("credentials", (result) => {
     const credentials = result.credentials || [];
     
@@ -79,10 +80,14 @@ function saveCredentials(data) {
     });
     
     // Save updated credentials
-    chrome.storage.local.set({ "credentials": credentials });
-    
-    // Clear temporary password
-    chrome.storage.local.remove("tempPassword");
-    chrome.storage.local.remove("tempTimestamp");
+    chrome.storage.local.set({ "credentials": credentials }, () => {
+      // Clear temporary password
+      chrome.storage.local.remove(["tempPassword", "tempTimestamp"], () => {
+        // Execute callback if provided
+        if (callback && typeof callback === 'function') {
+          callback();
+        }
+      });
+    });
   });
 }

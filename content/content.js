@@ -11,8 +11,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     // Start monitoring for form submission
     monitorFormSubmission();
+    
+    // Send immediate response
+    sendResponse({ success: true });
   }
-  return true;
 });
 
 // Fill the password in the currently focused input field and any confirm password field
@@ -204,10 +206,13 @@ function captureCredentials(event) {
       userData.username = value;
     }
   });
-  
-  // Send the captured data to the background script
+    // Send the captured data to the background script
   chrome.runtime.sendMessage({
     action: "saveCredentials",
     data: userData
+  }, (response) => {
+    if (response && response.success) {
+      console.log("Credentials saved successfully");
+    }
   });
 }
