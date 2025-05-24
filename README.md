@@ -10,6 +10,7 @@ While modern browsers offer built-in password generation features, they're not c
 
 - **Right-Click Password Generation**: Generate a strong password directly from the context menu
 - **Auto-paste**: Automatically paste the generated password into the selected field
+- **Smart Confirm Password Detection**: Automatically fills matching "confirm password" fields
 - **Credential Storage**: Securely store your usernames, emails, phone numbers, and passwords
 - **Password History**: Keep track of all your generated passwords
 - **Secure by Design**: Your data never leaves your device

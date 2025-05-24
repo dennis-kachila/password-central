@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-// Fill the password in the currently focused input field
+// Fill the password in the currently focused input field and any confirm password field
 function fillPasswordField(password) {
   const activeElement = document.activeElement;
   
@@ -31,12 +31,100 @@ function fillPasswordField(password) {
       // Also trigger change event
       const changeEvent = new Event('change', { bubbles: true });
       activeElement.dispatchEvent(changeEvent);
+      
+      // Find and fill any confirm password fields
+      findAndFillConfirmPasswordFields(password);
     } 
     // If it's a contentEditable element
     else if (activeElement.isContentEditable) {
       activeElement.textContent = password;
     }
   }
+}
+
+// Function to find and fill confirm password fields
+function findAndFillConfirmPasswordFields(password) {
+  // Get the form containing the active element
+  const form = document.activeElement.form;
+  let confirmPasswordField = null;
+  
+  if (form) {
+    // Look within the form first
+    const inputs = form.querySelectorAll('input[type="password"]');
+    
+    // Skip the first field if it's our active element
+    for (let i = 0; i < inputs.length; i++) {
+      if (inputs[i] !== document.activeElement) {
+        // Check if this field might be a confirm password field
+        const field = inputs[i];
+        const fieldId = field.id.toLowerCase();
+        const fieldName = field.name.toLowerCase();
+        const fieldLabel = findAssociatedLabel(field);
+        
+        // Check for common confirm password identifiers
+        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') ||
+            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') ||
+            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat')))) {
+          confirmPasswordField = field;
+          break;
+        }
+      }
+    }
+  }
+  
+  // If no confirm field found in the form, look in the entire page
+  if (!confirmPasswordField) {
+    const allPasswordFields = document.querySelectorAll('input[type="password"]');
+    
+    for (let i = 0; i < allPasswordFields.length; i++) {
+      if (allPasswordFields[i] !== document.activeElement) {
+        const field = allPasswordFields[i];
+        const fieldId = field.id.toLowerCase();
+        const fieldName = field.name.toLowerCase();
+        const fieldLabel = findAssociatedLabel(field);
+        
+        // Check for common confirm password identifiers
+        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') ||
+            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') ||
+            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat')))) {
+          confirmPasswordField = field;
+          break;
+        }
+      }
+    }
+  }
+  
+  // Fill the confirm password field if found
+  if (confirmPasswordField) {
+    confirmPasswordField.value = password;
+    
+    // Trigger events to notify the page
+    const inputEvent = new Event('input', { bubbles: true });
+    confirmPasswordField.dispatchEvent(inputEvent);
+    
+    const changeEvent = new Event('change', { bubbles: true });
+    confirmPasswordField.dispatchEvent(changeEvent);
+  }
+}
+
+// Helper function to find associated label for an input field
+function findAssociatedLabel(input) {
+  // Check for label with 'for' attribute
+  if (input.id) {
+    const label = document.querySelector(`label[for="${input.id}"]`);
+    if (label) return label.textContent.toLowerCase();
+  }
+  
+  // Check for parent label
+  let parent = input.parentElement;
+  while (parent) {
+    if (parent.tagName === 'LABEL') {
+      return parent.textContent.toLowerCase();
+    }
+    parent = parent.parentElement;
+  }
+  
+  return null;
 }
 
 // Show a notification to the user
