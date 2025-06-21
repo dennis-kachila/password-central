@@ -10,9 +10,15 @@ While modern browsers offer built-in password generation features, they're not c
 
 - **Right-Click Password Generation**: Generate a strong password directly from the context menu
 - **Auto-paste**: Automatically paste the generated password into the selected field
-- **Smart Confirm Password Detection**: Automatically fills matching "confirm password" fields
+- **Enhanced Password Field Detection**: Intelligently identifies password fields using multiple heuristics
+- **Smart Confirm Password Detection**: Automatically fills matching "confirm password" and "re-enter password" fields
 - **Credential Storage**: Securely store your usernames, emails, phone numbers, and passwords
 - **Password History**: Keep track of all your generated passwords
+- **Modern Credential Management**: View, search, sort, and manage your saved credentials in a dedicated interface
+- **Duplicate Protection**: Intelligent detection and prevention of duplicate credential entries
+- **Password Visibility Control**: Toggle password visibility with a simple click
+- **Quick Copy Functionality**: Easily copy usernames and passwords to clipboard
+- **Search Capabilities**: Quickly find credentials with the search feature
 - **Secure by Design**: Your data never leaves your device
 
 ## Screenshots
@@ -31,6 +37,10 @@ Here are some screenshots showing how Password Central works:
 ![Password Central popup interface](images/extension-management.png)
 *The extension in management settings*
 
+### Dedicated Credentials Page
+![Password Central credentials manager](images/credentials-page.png)
+*The dedicated credentials management page for viewing and managing all saved credentials*
+
 ## How It Works
 
 1. **Installation**: Install the extension from your browser's extension store (future release) for now just load it as an unpacked extension for development.
@@ -38,7 +48,18 @@ Here are some screenshots showing how Password Central works:
    - Right-click on any password field when creating a new account
    - Select "Generate Strong Password" from the context menu
    - The extension will generate a secure password and automatically paste it into the field
+   - The extension will automatically detect and fill "confirm password" or "re-enter password" fields
    - After successful account creation, the extension will prompt you to save your credentials
+   - View and manage all your saved credentials through the dedicated credentials page
+3. **Credentials Management**:
+   - Click on the extension icon in your browser toolbar
+   - Click "View All Credentials" button to open the dedicated credentials management page
+   - Search for specific credentials using the search box
+   - Sort credentials by website, username, or date
+   - Show/hide passwords with the visibility toggle
+   - Copy usernames or passwords with a single click
+   - Delete unwanted credentials
+   - The system automatically prevents duplicate entries by updating existing credentials
 
 ## Installation Instructions
 
@@ -69,7 +90,10 @@ password-central/
 ├── popup/                  # User interface for the extension
 │   ├── popup.html          # Popup HTML
 │   ├── popup.css           # Popup styling
-│   └── popup.js            # Popup functionality
+│   ├── popup.js            # Popup functionality
+│   ├── credentials.html    # Credentials management page
+│   ├── credentials.css     # Credentials page styling
+│   └── credentials.js      # Credentials page functionality
 ├── content/                # Content scripts
 │   └── content.js          # Script injected into web pages
 ├── icons/                  # Extension icons
@@ -92,6 +116,8 @@ password-central/
 - Credentials are encrypted before being stored
 - The extension requires minimal permissions
 - Regular security audits are performed
+- Duplicate credential prevention helps maintain data integrity
+- No credential data is transmitted externally
 
 ## Privacy Policy
 
