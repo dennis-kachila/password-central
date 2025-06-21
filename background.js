@@ -37,6 +37,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true; // Keep the message channel open for the async response
   }
+  
+  // Handle opening the credentials page
+  else if (message.action === "openCredentialsPage") {
+    const credentialsUrl = chrome.runtime.getURL('popup/credentials.html');
+    chrome.tabs.create({ url: credentialsUrl }, tab => {
+      sendResponse({ success: true, tabId: tab.id });
+    });
+    return true; // Keep the message channel open for the async response
+  }
 });
 
 // Generate a strong password
@@ -69,15 +78,63 @@ function saveCredentials(data, callback) {
   chrome.storage.local.get("credentials", (result) => {
     const credentials = result.credentials || [];
     
-    // Add new credentials
-    credentials.push({
-      url: data.url,
-      username: data.username,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-      date: new Date().toISOString()
+    // Extract domain from URL
+    let domain = '';
+    try {
+      domain = new URL(data.url).hostname;
+    } catch (e) {
+      domain = data.url;
+    }
+    
+    // Check for duplicates
+    const identifier = data.username || data.email || data.phone || '';
+    const isDuplicate = credentials.some(cred => {
+      let credDomain = '';
+      try {
+        credDomain = new URL(cred.url).hostname;
+      } catch (e) {
+        credDomain = cred.url;
+      }
+      
+      const credIdentifier = cred.username || cred.email || cred.phone || '';
+      return domain === credDomain && identifier === credIdentifier;
     });
+    
+    // If it's a duplicate, update the existing entry instead of adding a new one
+    if (isDuplicate) {
+      for (let i = 0; i < credentials.length; i++) {
+        let credDomain = '';
+        try {
+          credDomain = new URL(credentials[i].url).hostname;
+        } catch (e) {
+          credDomain = credentials[i].url;
+        }
+        
+        const credIdentifier = credentials[i].username || credentials[i].email || credentials[i].phone || '';
+        
+        if (domain === credDomain && identifier === credIdentifier) {
+          credentials[i] = {
+            url: data.url,
+            username: data.username,
+            email: data.email,
+            phone: data.phone,
+            password: data.password,
+            date: new Date().toISOString()
+          };
+          break;
+        }
+      }
+    } else {
+      // Add new credentials
+      credentials.push({
+        url: data.url,
+        username: data.username,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        date: new Date().toISOString()
+      });
+    }
     
     // Save updated credentials
     chrome.storage.local.set({ "credentials": credentials }, () => {

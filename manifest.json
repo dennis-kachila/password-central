@@ -3,11 +3,14 @@
   "name": "Password Central",
   "version": "1.0",
   "description": "Generate strong, unique passwords when creating accounts, with automatic field filling and credential storage",
-  "permissions": [
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },"permissions": [
     "contextMenus",
     "storage",
     "clipboardWrite",
-    "activeTab"
+    "activeTab",
+    "tabs"
   ],
   "icons": {
     "16": "icons/icon16.png",
@@ -24,11 +27,16 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "content_scripts": [
+  },  "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content/content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["popup/credentials.html", "popup/credentials.css", "popup/credentials.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }
