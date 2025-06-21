@@ -1,13 +1,9 @@
 // Content script for the Password Generator extension
 
 // Listen for messages from the background script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "fillPassword") {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {  if (message.action === "fillPassword") {
     // Fill the password in the active element (password field)
     fillPasswordField(message.password);
-    
-    // Show a notification to the user
-    showNotification("Password generated and filled in the field.");
     
     // Start monitoring for form submission
     monitorFormSubmission();
@@ -35,7 +31,12 @@ function fillPasswordField(password) {
       activeElement.dispatchEvent(changeEvent);
       
       // Find and fill any confirm password fields
-      findAndFillConfirmPasswordFields(password);
+      const confirmedFilled = findAndFillConfirmPasswordFields(password);
+      
+      // If confirmation field wasn't found and filled, show the single field notification
+      if (!confirmedFilled) {
+        showNotification("Password generated and filled in the field.");
+      }
     } 
     // If it's a contentEditable element
     else if (activeElement.isContentEditable) {
@@ -56,17 +57,19 @@ function findAndFillConfirmPasswordFields(password) {
     
     // Skip the first field if it's our active element
     for (let i = 0; i < inputs.length; i++) {
-      if (inputs[i] !== document.activeElement) {
-        // Check if this field might be a confirm password field
+      if (inputs[i] !== document.activeElement) {        // Check if this field might be a confirm password field
         const field = inputs[i];
         const fieldId = field.id.toLowerCase();
         const fieldName = field.name.toLowerCase();
         const fieldLabel = findAssociatedLabel(field);
         
         // Check for common confirm password identifiers
-        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') ||
-            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') ||
-            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat')))) {
+        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') || 
+            fieldId.includes('reenter') || fieldId.includes('re-enter') ||
+            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') || 
+            fieldName.includes('reenter') || fieldName.includes('re-enter') ||
+            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat') || 
+                          fieldLabel.includes('reenter') || fieldLabel.includes('re-enter') || fieldLabel.includes('re enter')))) {
           confirmPasswordField = field;
           break;
         }
@@ -79,16 +82,18 @@ function findAndFillConfirmPasswordFields(password) {
     const allPasswordFields = document.querySelectorAll('input[type="password"]');
     
     for (let i = 0; i < allPasswordFields.length; i++) {
-      if (allPasswordFields[i] !== document.activeElement) {
-        const field = allPasswordFields[i];
+      if (allPasswordFields[i] !== document.activeElement) {        const field = allPasswordFields[i];
         const fieldId = field.id.toLowerCase();
         const fieldName = field.name.toLowerCase();
         const fieldLabel = findAssociatedLabel(field);
         
         // Check for common confirm password identifiers
-        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') ||
-            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') ||
-            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat')))) {
+        if (fieldId.includes('confirm') || fieldId.includes('verify') || fieldId.includes('repeat') || 
+            fieldId.includes('reenter') || fieldId.includes('re-enter') ||
+            fieldName.includes('confirm') || fieldName.includes('verify') || fieldName.includes('repeat') || 
+            fieldName.includes('reenter') || fieldName.includes('re-enter') ||
+            (fieldLabel && (fieldLabel.includes('confirm') || fieldLabel.includes('verify') || fieldLabel.includes('repeat') || 
+                          fieldLabel.includes('reenter') || fieldLabel.includes('re-enter') || fieldLabel.includes('re enter')))) {
           confirmPasswordField = field;
           break;
         }
@@ -106,7 +111,13 @@ function findAndFillConfirmPasswordFields(password) {
     
     const changeEvent = new Event('change', { bubbles: true });
     confirmPasswordField.dispatchEvent(changeEvent);
+    
+    // Show a notification that both fields were filled
+    showNotification("Password generated and filled in both fields.");
+    return true;
   }
+  
+  return false;
 }
 
 // Helper function to find associated label for an input field
@@ -124,6 +135,41 @@ function findAssociatedLabel(input) {
       return parent.textContent.toLowerCase();
     }
     parent = parent.parentElement;
+  }
+  
+  // Check for nearby elements that might be labels (preceding siblings or previous elements)
+  let previousElement = input.previousElementSibling;
+  if (previousElement) {
+    // Check if the previous element contains text that might indicate a password confirmation field
+    const previousText = previousElement.textContent.toLowerCase();
+    if (previousText.includes('confirm') || previousText.includes('verify') || 
+        previousText.includes('repeat') || previousText.includes('re-enter') || 
+        previousText.includes('reenter') || previousText.includes('re enter')) {
+      return previousText;
+    }
+  }
+  
+  // Look for nearby divs, spans, or paragraphs that might act as labels
+  const possibleLabels = input.closest('form, div, fieldset')?.querySelectorAll('div, span, p, label, h1, h2, h3, h4, h5, h6');
+  if (possibleLabels) {
+    for (const element of possibleLabels) {
+      if (element !== input && element.textContent) {
+        const text = element.textContent.toLowerCase();
+        if (text.includes('confirm') || text.includes('verify') || 
+            text.includes('repeat') || text.includes('re-enter') || 
+            text.includes('reenter') || text.includes('re enter')) {
+          // Check if this element is reasonably close to our input
+          const elementRect = element.getBoundingClientRect();
+          const inputRect = input.getBoundingClientRect();
+          const verticalDistance = Math.abs(elementRect.bottom - inputRect.top);
+          
+          // If the element is within a reasonable distance (e.g., 50px vertically)
+          if (verticalDistance < 50) {
+            return text;
+          }
+        }
+      }
+    }
   }
   
   return null;
