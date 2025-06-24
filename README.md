@@ -14,6 +14,7 @@ While modern browsers offer built-in password generation features, they're not c
 - **Smart Confirm Password Detection**: Automatically fills matching "confirm password" and "re-enter password" fields
 - **Credential Storage**: Securely store your usernames, emails, phone numbers, and passwords
 - **Password History**: Keep track of all your generated passwords
+- **Password Change Support**: Automatically detects password change forms and saves the new credentials
 - **Modern Credential Management**: View, search, sort, and manage your saved credentials in a dedicated interface
 - **Duplicate Protection**: Intelligent detection and prevention of duplicate credential entries
 - **Password Visibility Control**: Toggle password visibility with a simple click
@@ -41,6 +42,10 @@ Here are some screenshots showing how Password Central works:
 ![Password Central credentials manager](images/credentials-page.png)
 *The dedicated credentials management page for viewing and managing all saved credentials*
 
+### Password Change Detection
+![Password change form detection](images/password-change.png)
+*The extension detects password change forms and helps save updated credentials*
+
 ## How It Works
 
 1. **Installation**: Install the extension from your browser's extension store (future release) for now just load it as an unpacked extension for development.
@@ -51,7 +56,16 @@ Here are some screenshots showing how Password Central works:
    - The extension will automatically detect and fill "confirm password" or "re-enter password" fields
    - After successful account creation, the extension will prompt you to save your credentials
    - View and manage all your saved credentials through the dedicated credentials page
-3. **Credentials Management**:
+3. **Password Change Support**:
+   - When on a password change form (with current password, new password, and confirm new password fields)
+   - Right-click on the new password field and select "Generate Strong Password"
+   - The extension will generate a password and fill both the new password and confirm password fields
+   - When you click "Save new password" on the website, the extension will:
+     - Automatically detect the password change action
+     - Ask for username/email if the credentials were not previously saved
+     - Update existing credentials or save new ones based on the website
+     - Allow you to continue with auto-filled credentials on your next visit
+4. **Credentials Management**:
    - Click on the extension icon in your browser toolbar
    - Click "View All Credentials" button to open the dedicated credentials management page
    - Search for specific credentials using the search box
